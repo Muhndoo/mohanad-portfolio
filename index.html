@@ -60,6 +60,10 @@
   .more-tile .label{ position:absolute; bottom:0; left:0; right:0; padding:14px 16px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.03em; z-index:2; }
   .more-tile .flag{ position:absolute; top:12px; right:12px; z-index:3; font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.08em; text-transform:uppercase; background:rgba(139,111,71,0.85); color:var(--ink); padding:3px 7px; border-radius:2px; }
 
+  .img-pending{ width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle at 35% 30%, rgba(139,111,71,0.22), transparent 60%), linear-gradient(160deg, #17140f 0%, #0c0b09 100%); }
+  .img-pending span{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(201,191,175,0.4); border:1px solid rgba(201,191,175,0.18); padding:8px 14px; border-radius:2px; }
+
   footer{ padding:100px 48px 60px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:36px; }
   footer h2{ font-family:'Fraunces', serif; font-weight:300; font-style:italic; font-size:clamp(28px, 3.6vw, 50px); max-width:600px; line-height:1.1; }
   .footer-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--stone); line-height:2; }
@@ -135,7 +139,9 @@
 <!-- Intro animation dependencies -->
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
-<script src="assets/js/mohanad-intro.js"></script>
+<!-- TODO: restore when real intro JS is re-uploaded (original upload was a mislabeled JPEG)
+<script src="assets/js/mohanad-intro.js"></script> -->
+
 <script>
 (function(){
   var SKIP_KEY = 'mohanad_intro_seen';
@@ -189,19 +195,19 @@ const HERO_PROJECTS = [
     title: "Family Residential Home",
     tag: "02 — Full Execution",
     skill: "End-to-end delivery: design, documentation, site coordination",
-    img: "assets/apartment.jpg"
+    img: null
   },
   {
     title: "Master Spa Bathroom",
     tag: "03 — Residential, USA",
     skill: "Remote coordination with a US client, spa-grade material palette",
-    img: "assets/spa.jpg"
+    img: "assets/spa-bathroom.jpg"
   },
   {
     title: "Residential Villa",
     tag: "04 — Renovation",
     skill: "Full villa restructure for a young family, before/after transformation",
-    img: "assets/villa.jpg"
+    img: null
   },
   {
     title: "Amount Café",
@@ -213,16 +219,22 @@ const HERO_PROJECTS = [
 
 const MORE_PROJECTS = [
   { title: "Ministry of Energy", note: "Unreal Engine · 72-hr technical assessment", img: "assets/energy.jpg", flag: "Rapid Prototype" },
-  { title: "Paramount Showroom, Bahrain", note: "Freelance, Revit + Lumion", img: "assets/villa.jpg" },
-  { title: "IKEA Sustainable Kitchen", note: "Collaborative retail concept", img: "assets/cafe.jpg" },
-  { title: "IKEA Restaurant", note: "Full-scale zoning & procurement", img: "assets/fitness.jpg" }
+  { title: "Paramount Showroom, Bahrain", note: "Freelance, Revit + Lumion", img: null },
+  { title: "IKEA Sustainable Kitchen", note: "Collaborative retail concept", img: null },
+  { title: "IKEA Restaurant", note: "Full-scale zoning & procurement", img: null }
 ];
+
+function imgOrPending(p){
+  return p.img
+    ? `<img src="${p.img}" alt="${p.title}" onerror="this.outerHTML='<div class=&quot;img-pending&quot;><span>Render in progress</span></div>'">`
+    : `<div class="img-pending"><span>Render in progress</span></div>`;
+}
 
 function renderProjects(){
   const grid = document.getElementById('project-grid');
   grid.innerHTML = HERO_PROJECTS.map(p => `
     <div class="project" ${p.link ? `onclick="window.location.href='${p.link}'" style="cursor:pointer;"` : ''}>
-      <img src="${p.img}" alt="${p.title}">
+      ${imgOrPending(p)}
       <div class="overlay"></div>
       <div class="info">
         <div>
@@ -237,7 +249,7 @@ function renderProjects(){
   const more = document.getElementById('more-grid');
   more.innerHTML = MORE_PROJECTS.map(p => `
     <div class="more-tile">
-      <img src="${p.img}" alt="${p.title}">
+      ${imgOrPending(p)}
       <div class="overlay"></div>
       ${p.flag ? `<div class="flag">${p.flag}</div>` : ''}
       <div class="label">${p.title}</div>
